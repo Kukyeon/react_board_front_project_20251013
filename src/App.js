@@ -11,7 +11,8 @@ import BoardWrite from './pages/BoardWrite';
 
 function App() {
   return (
-    <Router>
+
+    <div className='App'>
       <Navbar />
       <Routes>
         <Route path='/' element={<Home />}></Route>
@@ -21,7 +22,7 @@ function App() {
         <Route path='/board/write' element={<BoardWrite />}></Route>
         <Route path='/board/:id' element={<BoardDetail />}></Route>
       </Routes>
-    </Router>
+    </div>
   );
 }
 

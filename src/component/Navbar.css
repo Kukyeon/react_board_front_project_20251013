@@ -17,7 +17,7 @@
 
 .navbar .menu a,
 .navbar .menu button {
-    text-align: none;
+    text-decoration: none;
     background: none;
     border: none;
     cursor: pointer;
