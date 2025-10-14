@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axiosConfig";
+import "./BoardWrite.css";
 
 
 function BoardWrite({ user }){
@@ -33,7 +34,7 @@ function BoardWrite({ user }){
     return (
         <div className="write-container">
             <h2>글쓰기</h2>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="write-form">
                 <input type="text" placeholder="제목" value={title} 
                 onChange={(e)=>setTitle(e.target.value)} />
                 <textarea placeholder="내용" value={content}
