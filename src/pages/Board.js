@@ -48,14 +48,15 @@ function Board({user}){
     //ex) 총 게시글 수 : 157 -> 총 16페이지 필요 -> [1 2 3 4 5 6 7 8 9 10]
     // ▶ -> [11 12 13 14 15 16]
     const getPageNumbers = () => {
-        const start = 0;
-        const end = 0;
+        const startPage = Math.floor(currentPage / 10) * 10;
+        //0 1 2 3 4 -> 5 6 7 8 9 --> Math.floor(currentPage / 5) * 5;
+        const endPage = (startPage + 10) > totalPages ? totalPages : (startPage+10);
         const pages = [];
-        for (let i = start ; i < end ; i++){
-            pages.push[i];
-        }
+        for (let i = startPage; i < endPage; i++ ) {
+            pages.push(i);
+        };
         return pages;
-    }
+    };
 
 
     //날자 format 함수
@@ -106,13 +107,17 @@ function Board({user}){
             </table>
             {/* 페이지 번호와 이동 화살표 출력 */}
             <div className="pagination">
-                <button> ◀ </button>
+                <button onClick={() => currentPage > 0 && setCurrentPage(currentPage - 1)} 
+                        disabled={currentPage === 0} > ◀ </button>
                 {getPageNumbers().map((num) => (
-                    <button onClick={() => setCurrentPage(num)}>{num + 1}</button>
+                    <button key={num} onClick={() => setCurrentPage(num)}>
+                        {num + 1}
+                    </button>
                 )
                 )}    
 
-                <button> ▶ </button>
+                <button onClick={() => currentPage < totalPages - 1 && setCurrentPage(currentPage + 1)} 
+                        disabled={currentPage === totalPages - 1} > ▶ </button>
             </div>        
 
             <div className="write-button-container">
