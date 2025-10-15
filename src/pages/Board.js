@@ -6,15 +6,22 @@ import { useNavigate } from "react-router-dom";
 function Board({user}){
 
     const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     //게시판 모든 글 요청
     const loadPosts = async () => {
         try {
+            setLoading(true);
             const res = await api.get("/api/board"); // 모든 글 가져오기 요청
             setPosts(res.data); //posts -> 전체게시글 , 게시글의 배열
         } catch (err) {
             console.error(err);
+            setError("게시글을 불러오는 중 실패하였습니다.");
+            setPosts([]); // 게시글들의 배열을 초기화
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -40,6 +47,8 @@ function Board({user}){
     return (
         <div className="container">
             <h2>게시판</h2>
+            {loading && <p>게시판 글 목록 로딩중...</p>}
+            {error && <p style={{color:"red"}}>{error}</p>}
             <table className="board-table">
                 <thead>
                     <tr>
@@ -57,7 +66,9 @@ function Board({user}){
                         .map((p, index) => (
                         <tr key={p.id}>
                             <td>{posts.length - index}</td>
-                            <td>{p.title}</td>
+                            <td className="click-title" onClick={()=>navigate(`/board/${p.id}`)}>
+                                {p.title}
+                            </td>
                             <td>{p.author.username}</td>
                             <td>{formatDate(p.createDate)}</td>
                         </tr>

@@ -1,0 +1,71 @@
+.detail-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.detail-container h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.detail-container .author {
+    font-size: 14px;
+    color: gray;
+    margin-bottom: 20px;
+
+}
+
+.detail-container .content {
+    min-height: 150px;
+    border: 1px solid #dddddd;
+    border-radius: 5px;
+    background-color: aliceblue;
+    margin-bottom: 20px;
+    padding: 10px;
+    font-size: 16px;
+    white-space: pre-wrap;
+    line-height: 1.5;
+}
+
+.list-button:hover {
+    background-color: #c8fd07;
+    color: white;
+}
+
+.delete-button:hover {
+    background-color: #f74747;
+    color: white;
+}
+
+.edit-button:hover {
+    background-color: #40f329;
+    color: white;
+}
+
+.edit-form input { 
+    width: 100%;
+    border: 1px solid;
+    margin-bottom: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    padding: 10px;
+    height: 40px;
+    box-sizing: border-box;
+}
+
+.edit-form textarea { 
+    width: 100%;
+    border: 1px solid;
+    margin-bottom: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    padding: 10px;
+    min-height: 120px;
+    resize: vertical;
+    box-sizing: border-box;
+}
