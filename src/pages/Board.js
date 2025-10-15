@@ -8,9 +8,9 @@ function Board({user}){
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [currentPage, setCurrentPage] = useState(0);
-    const [totalPages, setTotalPages] = useState(0);
-    const [totalItems, setTotalItems] = useState(0);
+    const [currentPage, setCurrentPage] = useState(0); // 현재 페이지 번호
+    const [totalPages, setTotalPages] = useState(0); // 모든 페이지 갯수
+    const [totalItems, setTotalItems] = useState(0); // 모든 글의 갯수
     const navigate = useNavigate();
 
     //게시판 모든 글 요청
@@ -82,11 +82,10 @@ function Board({user}){
                 <tbody>
                     { posts.length > 0 ? (
                         posts
-                        .slice()
-                        .reverse() // 최신글이 위로오게
+                        .slice()// 얕은 복사
                         .map((p, index) => (
                         <tr key={p.id}>
-                            <td>{posts.length - index}</td>
+                            <td>{totalItems - (index + (10 * currentPage))}</td>
                             <td className="click-title" onClick={()=>navigate(`/board/${p.id}`)}>
                                 {p.title}
                             </td>
@@ -107,7 +106,7 @@ function Board({user}){
             </table>
             {/* 페이지 번호와 이동 화살표 출력 */}
             <div className="pagination">
-                
+
                  {/* 첫번째 페이지로 이동  */}
                 <button onClick={() => setCurrentPage(0)}
                     disabled={currentPage === 0}>
