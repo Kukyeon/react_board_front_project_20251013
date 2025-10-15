@@ -73,6 +73,34 @@ function BoardDetail({ user }) {
         }
     };
 
+    //댓글 관련 이벤트 처리 
+
+    const [newComment, setNowComment] = useState(""); // 새로운 댓글 저장 변수
+    const [commnets, setComments] = useState([]); // 백엔드에서 가져온 기존 댓글 배열
+    const [editCommentContent, setEditCommentContent] = useState("");
+    const [editCommentId, setEditCommentId] = useState(null);
+
+    //날자 format 함수
+    const formatDate = (dateString) => {
+       //const date = new Date(dateString);
+       return dateString.substring(0,10);
+    }
+
+    //댓글 등록 함수
+    const handleCommentSubmit = () => {
+
+    }
+    //댓글 삭제 함수
+    const handleCommentDelete = (commentId) => {
+
+    }
+    //댓글 수정 이벤트 함수
+    const handleCommentUpdate = () => {
+
+    }
+
+    //댓글 관련 이벤트 처리 끝
+
     if(loading) return <p>게시글 로딩중 ...</p>;
     if(error) return <p style={{color:"red"}} >{error}</p>
     if(!post) return <p style={{color:"red"}}>게시글이 존재하지않습니다.</p>
@@ -110,8 +138,54 @@ function BoardDetail({ user }) {
                     </> 
                 )}
             </div>
+
+            {/* 댓글 영역 */}
+            <div className="comment-section">
+                {/* 댓글 입력 폼 영역 */}
+                <h3>댓글</h3>
+                <form onSubmit={handleCommentSubmit} className="comment-form">
+                    <textarea placeholder="댓글을 입력해주세요."
+                        value={newComment} 
+                        onChange={(e) => setNowComment(e.target.value)}
+                    ></textarea>
+                    <button type="submit" className="comment-button">등록</button>
+                </form>
+                {/* 댓글 입력 폼 영역 */}
+
+                {/* 댓글 리스트  영역 */}
+                <ul className="comment-list">
+                    {commnets.map((c)=>(
+                        <li key={c.id} className="comment-item">
+                            <div className="comment-header">
+                                <span className="comment-author">
+                                    {c.author.username}
+                                </span>
+                                <span className="comment-date">
+                                    {formatDate(c.createDate)}
+                                </span>
+                            </div>
+                            
+                            <div className="comment-content">
+                                {c.content}
+                            </div>
+                            <div className="button-group">
+                                <button className="list-button" onClick={() => navigator("/board")}>글 목록</button>
+                                {/* 로그인한 유저 본인이 쓴 글만 삭제 수정 가능 */}
+                                {user === c.author.username && ( // 두개의 버튼을 묶어서 체크
+                                    <> 
+                                        <button className="edit-button" onClick={() => handleCommentUpdate(c)}>수정</button>
+                                        <button className="delete-button" onClick={handleCommentDelete(c.commentId)}>삭제</button> 
+                                    </> 
+                                )}
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+                {/* 댓글 리스트  영역 끝 */}
+            </div>    
+            {/* 댓글 영역 */}
             </>
-            )}
+        )}
         </div>
     );
 }
