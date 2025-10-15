@@ -8,14 +8,20 @@ function Board({user}){
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [totalItems, setTotalItems] = useState(0);
     const navigate = useNavigate();
 
     //게시판 모든 글 요청
-    const loadPosts = async () => {
+    const loadPosts = async (page = 0) => {
         try {
             setLoading(true);
-            const res = await api.get("/api/board"); // 모든 글 가져오기 요청
-            setPosts(res.data); //posts -> 전체게시글 , 게시글의 배열
+            const res = await api.get(`/api/board?page=${page}&size=10`); // 모든 글 가져오기 요청
+            setPosts(res.data.posts); //posts -> 전체게시글 , 게시글의 배열
+            setCurrentPage(res.data.currentPage); // 현재 페이지 번호
+            setTotalPages(res.data.totalPages); // 전체 페이지 수
+            setTotalItems(res.data.totalItems); //모든 글의 갯수
         } catch (err) {
             console.error(err);
             setError("게시글을 불러오는 중 실패하였습니다.");
@@ -35,8 +41,22 @@ function Board({user}){
     };
 
     useEffect(() => {
-        loadPosts();
-    },[])
+        loadPosts(currentPage);
+    },[currentPage])
+
+    //페이지 번호 그룹 배열 반환 함수 (10개까지만 표기)
+    //ex) 총 게시글 수 : 157 -> 총 16페이지 필요 -> [1 2 3 4 5 6 7 8 9 10]
+    // ▶ -> [11 12 13 14 15 16]
+    const getPageNumbers = () => {
+        const start = 0;
+        const end = 0;
+        const pages = [];
+        for (let i = start ; i < end ; i++){
+            pages.push[i];
+        }
+        return pages;
+    }
+
 
     //날자 format 함수
     const formatDate = (dateString) => {
@@ -84,6 +104,17 @@ function Board({user}){
                     }
                 </tbody>
             </table>
+            {/* 페이지 번호와 이동 화살표 출력 */}
+            <div className="pagination">
+                <button> ◀ </button>
+                {getPageNumbers().map((num) => (
+                    <button onClick={() => setCurrentPage(num)}>{num + 1}</button>
+                )
+                )}    
+
+                <button> ▶ </button>
+            </div>        
+
             <div className="write-button-container">
                 <button onClick={handleWrite} 
                 className="write-button">글쓰기</button>
