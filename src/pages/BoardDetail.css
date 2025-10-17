@@ -69,3 +69,135 @@
     resize: vertical;
     box-sizing: border-box;
 }
+
+/* 댓글 영역 */
+
+.comment-section {
+    padding: 20px;
+    margin-top: 40px;
+    background-color: rgb(224, 224, 224);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+}
+
+.comment-section h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #4d4a4a;
+
+}
+
+.comment-form {
+    margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.comment-form textarea {
+    min-height: 80px;
+    padding: 12px;
+    border: 1px solid #cccccc;
+    border-radius: 10px;
+    font-size: 14px;
+    resize: none;
+}
+
+.comment-form textarea:focus {
+    border-color: rgb(87, 143, 247);
+    background-color: aliceblue;
+    outline: none;
+}
+
+.comment-edit,
+.comment-delete,
+.comment-button {
+    background-color: #1e88e5;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 15px;
+    width: 60px;
+    align-self: flex-end;
+}
+
+.comment-save,
+.comment-cancel {
+    background-color: #1e88e5;
+    color: white;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 15px;
+    width: 50px;
+    align-self: flex-end;
+}
+
+.comment-save:hover,
+.comment-cancel:hover,
+.comment-button:hover {
+    background-color: #135d9e;
+}
+
+.comment-saveg {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+
+.comment-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.comment-item {
+    background-color: white;
+    border: 1px solid #eeeeee;
+    border-radius: 10px;
+    padding: 10px 15px;
+    margin-bottom: 12px;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 7px;
+    background-color: rgba(0, 0, 0, 0.03);
+    padding: 5px;
+    border-radius: 3px;
+}
+
+.comment-author {
+    font-weight: bold;
+    color: #1e88e5;
+}
+
+.comment-date {
+    font-size: 12px;
+    color: #4d4a4a;
+}
+
+.comment-item textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #cccccc;
+    resize: none;
+    margin-bottom: 10px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.comment-item textarea:focus {
+    border-color: rgb(87, 143, 247);
+    background-color: aliceblue;
+    outline: none;
+}
+

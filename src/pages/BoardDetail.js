@@ -1,246 +1,97 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import api from "../api/axiosConfig";
 import "./BoardDetail.css";
 
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import api from "../api/axiosConfig";
+
+import PostEdit from "../component/PostEdit";
+import PostView from "../component/PostView";
+import CommentForm from "../component/CommentForm";
+import CommentList from "../component/CommentList";
+
 function BoardDetail({ user }) {
+  //props user->현재 로그인한 사용자의 username
 
-    const navigator = useNavigate();
+  const [post, setPost] = useState(null); //해당 글 id로 요청한 글 객체
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [editing, setEditing] = useState(false); //수정 화면 출력 여부
 
-    const [post, setPost] = useState(null); // 해당 글 아이디로 요청한 글 객체
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [editing, setEditing] = useState(false);
-    const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
-    const {id} = useParams(); // board/:id , id 파라미터 받아오기
+  const { id } = useParams(); // board/:id id 파라미터 받아오기
 
-    const loadPost = async () => { // 특정 글 id로 글 1개 불러오기
-        try {
-            setLoading(true);
-            const res = await api.get(`/api/board/${id}`)
-            setPost(res.data); //특정 글 id 객체 
-            setTitle(res.data.title);
-             //원본 글의 제목을 수정화면에 표시하는 변수인 title 변수에 저장
-            setContent(res.data.content);
-             //원본 글의 내용을 수정화면에 표시하는 변수인 content 변수에 저장
+  //클릭한 글의 id로 글 1개 가져오기
+  const loadPost = async () => {
+    //특정 글 id로 글 1개 요청하기
+    try {
+      setLoading(true);
+      const res = await api.get(`/api/board/${id}`);
+      setPost(res.data); //특정 글 id 객체를 state에 등록
 
-        } catch (err) {
-            console.error(err);
-            setError("해당 게시글은 존재하지 않습니다.")
-            //alert("해당 게시글은 존재하지 않습니다.")
-        } finally {
-            setLoading(false);
-        }
-    };
+      //원본 글의 제목을 수정화면에 표시하는 변수인 title 변수에 저장
 
-    useEffect(() => {
-        loadPost(); // 게시글 다시 불러오기
-        loadComments(); // 게시글에 달린 댓글 리스트 다시 불러오기
-    },[id]);
-
-    const handelDelete = async() => {
-        if(!window.confirm("정말 삭제하시겠습니까?")) {
-            return;
-        }
-        try {
-            await api.delete(`/api/board/${id}`);
-            alert("게시글 삭제 성공!");
-            navigator("/board");
-        } catch (err) {
-            console.error(err);
-            if(err.response.status === 403){
-                alert("삭제 권한이 없습니다.");
-            } else {
-                alert("삭제 실패!");
-            }
-
-        }
+      //원본 글의 내용을 수정화면에 표시하는 변수인 content 변수에 저장
+    } catch (err) {
+      console.error(err);
+      setError("해당 게시글은 존재하지 않습니다.");
+      // alert("해당 게시글은 존재하지 않습니다.");
+    } finally {
+      setLoading(false);
     }
+  };
 
-    const handleUpdate = async() => {
-        try {
-            const res = await api.put(`/api/board/${id}`,{title,content});
-            alert("수정 완료!");
-            setPost(res.data);
-            setEditing(false);
-        } catch (err) {
-            console.error(err);
-            if(err.response.status === 403){
-                alert("수정 권한이 없습니다.");
-            } else {
-                alert("수정 실패!");
-            }
-        }
-    };
+  useEffect(() => {
+    loadPost(); //게시글 다시 불러오기
+    loadComments(); //게시글에 달린 댓글 리스트 다시 불러오기
+  }, [id]);
 
-    //댓글 관련 이벤트 처리 
+  //댓글 관련 이벤트 처리 시작!
+  const [comments, setComments] = useState([]); //백엔드에서 가져온 기존 댓글 배열
 
-    const [newComment, setNewComment] = useState(""); // 새로운 댓글 저장 변수
-    const [commnets, setComments] = useState([]); // 백엔드에서 가져온 기존 댓글 배열
-    const [editingCommentContent, setEditingCommentContent] = useState("");
-    const [editingCommentId, setEditingCommentId] = useState(null);
-
-    //날자 format 함수
-    const formatDate = (dateString) => {
-       //const date = new Date(dateString);
-       return dateString.substring(0,10);
+  //댓글 리스트 불러오기 함수
+  const loadComments = async () => {
+    try {
+      const res = await api.get(`/api/comments/${id}`);
+      //res->댓글 리스트 저장(ex:7번글에 달린 댓글 4개 리스트)
+      setComments(res.data);
+    } catch (err) {
+      console.error(err);
+      alert("댓글 리스트 불러오기 실패!");
     }
+  };
+  //댓글 관련 이벤트 처리 끝!
 
-    //댓글 쓰기 함수 -> 원 게시글의 id를 파라미터로 제출
-    const handleCommentSubmit = async (e) => { // 백엔드에 댓글 저장 요청
-        e.preventDefault(); // 초기화방지
-        if (!newComment.trim()) {
-            alert("댓글 내용을 입력해주세요.");
-            return;
-        }
-        try {
-            await api.post(`/api/comments/${id}`, { content : newComment })
-            setNewComment("");
-            //댓글 리스트 불러오기 호출
-            loadComments(); // 새로운 댓글 반영 후 리스트 보여줌
-        } catch (err) {
-            console.error(err);
-            alert("댓글 등록 실패")
-        }
-    };
+  if (loading) return <p>게시글 로딩 중....</p>;
+  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (!post)
+    return <p sytle={{ color: "blue" }}>해당 게시글이 존재하지 않습니다.</p>;
 
-    //댓글 리스트 불러오기 함수
-    const loadComments = async () => {
-        try {
-            const res = await api.get(`/api/comments/${id}`);
-            //res -> 댓글 리스트 저장
-            setComments(res.data);
-        } catch (err) {
-            console.error(err);
-            alert("댓글 불러오기 실패")
-        }
-    }
+  return (
+    <div className="detail-container">
+      {editing ? (
+        <PostEdit post={post} setEditing={setEditing} setPost={setPost} />
+      ) : (
+        <>
+          <PostView post={post} setEditing={setEditing} user={user} />
 
-    //댓글 삭제 함수
-    const handleCommentDelete = (commentId) => {
+          {/* 댓글 영역 시작! */}
+          <div className="comment-section">
+            {/* 댓글 입력 폼 시작! */}
+            <CommentForm boardId={id} loadComments={loadComments} />
+            {/* 댓글 입력 폼 끝! */}
 
-    }
-    //댓글 수정 이벤트 함수 -> 백엔드에서 수정 요청
-    const handleCommentUpdate = (commentId) => {
-
-    }
-    //댓글 수정 창으로 이동
-    const handleCommentEdit = (comment) => {
-        setEditingCommentId(comment.id);
-    }
-
-
-    //댓글 관련 이벤트 처리 끝
-
-    if(loading) return <p>게시글 로딩중 ...</p>;
-    if(error) return <p style={{color:"red"}} >{error}</p>
-    if(!post) return <p style={{color:"red"}}>게시글이 존재하지않습니다.</p>
-
-    //로그인상태이면서, 로그인한 유저와 글을 쓴 유저가 같을때 -> 참
-    const isAuthor = user && user === post.author.username;
-
-    return (
-        <div className="detail-container">
-             {editing ? (
-                <div className="edit-form">
-                    <h2>글 수정하기</h2>
-                    <input type="text" value={title}
-                    onChange={(e) => setTitle(e.target.value)} />
-                    <textarea value={content}
-                    onChange={(e) => setContent(e.target.value)} />
-                    <div className="button-group">
-                        <button className="edit-button" onClick={handleUpdate}>저장</button>
-                        <button className="delete-button" onClick={() => setEditing(false)}>취소</button>
-                    </div>    
-                </div>
-            ):(
-            <>
-            <h2>{post.title}</h2>
-            <p className="author">작성자 : {post.author.username}</p>
-            <div className="content">{post.content}</div>
-
-            <div className="button-group">
-                <button className="list-button" onClick={() => navigator("/board")}>글 목록</button>
-                {/* 로그인한 유저 본인이 쓴 글만 삭제 수정 가능 */}
-                {isAuthor && ( // 두개의 버튼을 묶어서 체크
-                    <> 
-                        <button className="edit-button" onClick={() => setEditing(true)}>수정</button>
-                        <button className="delete-button" onClick={handelDelete}>삭제</button> 
-                    </> 
-                )}
-            </div>
-
-            {/* 댓글 영역 */}
-            <div className="comment-section">
-                {/* 댓글 입력 폼 영역 */}
-                <h3>댓글</h3>
-                <form onSubmit={handleCommentSubmit} className="comment-form">
-                    <textarea placeholder="댓글을 입력해주세요."
-                        value={newComment} 
-                        onChange={(e) => setNewComment(e.target.value)}
-                    ></textarea>
-                    <button type="submit" className="comment-button">등록</button>
-                </form>
-                {/* 댓글 입력 폼 영역 */}
-
-                {/* 댓글 리스트  영역 */}
-                <ul className="comment-list">
-                    {commnets.map((c)=>(
-                        <li key={c.id} className="comment-item">
-                            <div className="comment-header">
-                                <span className="comment-author">
-                                    {c.author.username}
-                                </span>
-                                <span className="comment-date">
-                                    {formatDate(c.createDate)}
-                                </span>
-                            </div>
-
-                        {editingCommentId === c.id ? (    
-                            /* 댓글 수정 섹션 */
-                            <>
-                                <textarea value={editingCommentContent}
-                                onChange={(e) => setEditingCommentContent(e.target.value)}/>
-
-                                <button className="comment-save"
-                                onClick={handleCommentUpdate(c.id)}>저장</button>
-
-                                <button className="comment-cancel"
-                                onClick={() => setEditingCommentId(null)}>취소</button>
-                            </>
-                        ) : (
-                            /* 댓글 읽기 섹션 */
-                            <>
-                            <div className="comment-content">
-                                {c.content}
-                            </div>
-
-                            <div className="button-group">
-                                
-                                
-                                {/* 로그인한 유저 본인이 쓴 글만 삭제 수정 가능 */}
-                                {user === c.author.username && ( // 두개의 버튼을 묶어서 체크
-                                    <> 
-                                        <button className="edit-button" 
-                                        onClick={handleCommentEdit(c)}>수정</button>
-                                        <button className="delete-button" 
-                                        onClick={handleCommentDelete(c.commentId)}>삭제</button> 
-                                    </> 
-                                )}
-                            </div>
-                            </>
-                            )}
-                        </li>
-                    ))}
-                </ul>
-                {/* 댓글 리스트  영역 끝 */}
-            </div>    
-            {/* 댓글 영역 */}
-            </>
-        )}
-        </div>
-    );
+            {/* 기존 댓글 리스트 시작! */}
+            <CommentList
+              comments={comments}
+              user={user}
+              loadComments={loadComments}
+            />
+            {/* 기존 댓글 리스트 끝! */}
+          </div>
+          {/* 댓글 영역 끝! */}
+        </>
+      )}
+    </div>
+  );
 }
 
 export default BoardDetail;
