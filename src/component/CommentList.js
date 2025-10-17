@@ -49,7 +49,7 @@ function CommentList({ comments, user, loadComments }) {
 
   //날짜 format 함수 -> 날짜와 시간 출력
   const commnetFormatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString();
+    return new Date(dateString).toLocaleString();
   };
 
   return (

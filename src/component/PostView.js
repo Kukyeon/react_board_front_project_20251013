@@ -23,10 +23,17 @@ function PostView({ post, user, setEditing }) {
       }
     }
   };
+
+  //날짜 format 함수 -> 날짜와 시간 출력
+  const FormatDate = (dateString) => {
+    return new Date(dateString).toLocaleString();
+  };
+
   return (
     <>
       <h2>{post.title}</h2>
       <p className="author">작성자 : {post.author.username}</p>
+      <p>작성일 : {FormatDate(post.createDate)}</p>
       <div className="content">{post.content}</div>
 
       <div className="button-group">
